@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Adrianos</title>
-<meta name="description" content="Notas de venta Distribuciones Adrianos">
+<meta name="description" content="Notas de venta Distribuidora Adriano's">
 <meta name="theme-color" content="#f76204">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
@@ -407,9 +407,9 @@
 <div class="shell">
   <header class="topbar">
     <div class="brand">
-      <img class="brand-logo" src="assets/logo.png" alt="Distribuciones Adrianos">
+      <img class="brand-logo" src="assets/logo.png" alt="Distribuidora Adriano's">
       <div class="brand-text">
-        <strong id="negocio-nombre">Distribuciones Adrianos</strong>
+        <strong id="negocio-nombre">Distribuidora Adriano's</strong>
         <button class="sync-badge" id="sync-badge" data-action="sincronizar-ahora" title="Tocar para sincronizar ahora"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Cargando…</span></button>
       </div>
     </div>
@@ -447,7 +447,7 @@
     productos: [],
     clientes: [],
     usuarios: [], nombresPublicos: [], papelera: [],
-    negocio: { nombre: "Distribuciones Adrianos", telefono: "", pie: "Gracias por su Compra. ¡Hasta la próxima entrega!", pedidos: "", logo: "assets/logo.png" },
+    negocio: { nombre: "Distribuidora Adriano's", telefono: "", pie: "Gracias por su Compra. ¡Hasta la próxima entrega!", pedidos: "", logo: "assets/logo.png" },
     db: null,
     dbReady: false
   };
@@ -478,7 +478,7 @@
     return sinRedondeo ? crudo : redondear10(crudo);
   }
   var MONEDA_NOMBRE = "SOLES";
-  var APP_VERSION = "26 sep · A2";
+  var APP_VERSION = "26 sep · A3";
   // Mensaje del pie en lineas centradas: "Gracias por su Compra" / "¡Hasta la próxima entrega!"
   function pieLineas(){
     var t = String(state.negocio.pie || "Gracias por su Compra. ¡Hasta la próxima entrega!");
@@ -842,7 +842,7 @@
   }
 
   function applyNegocioHeader(){
-    document.getElementById("negocio-nombre").textContent = state.negocio.nombre || "Distribuciones Adrianos";
+    document.getElementById("negocio-nombre").textContent = state.negocio.nombre || "Distribuidora Adriano's";
   }
 
   // Cloud sync is a best-effort mirror of the last ~1000 notes (platform query cap),
@@ -1713,7 +1713,7 @@
     }
     var n2 = function(n){ return (Number(n)||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); };
 
-    doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.text(pdfTxt(state.negocio.nombre||"Distribuciones Adrianos"), M, y); y += 7;
+    doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.text(pdfTxt(state.negocio.nombre||"Distribuidora Adriano's"), M, y); y += 7;
     doc.setFontSize(12); doc.text(pdfTxt("Resumen de ventas - "+per.titulo+filtroV), M, y); y += 5;
     doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(110); doc.text(pdfTxt("Generado el "+new Date().toLocaleString("es-PE")+" por "+(currentUser?currentUser.nombre:"")+". Montos en soles, sin IGV."), M, y); doc.setTextColor(0); y += 8;
 
@@ -2355,7 +2355,7 @@
     if(logoDataUrl){
       try{ doc.addImage(logoDataUrl, "JPEG", x+w/2-13, y, 26, 26); y += 30; }catch(e){}
     } else {
-      y += 4; center(state.negocio.nombre||"Distribuciones Adrianos", 13, true); y+=6;
+      y += 4; center(state.negocio.nombre||"Distribuidora Adriano's", 13, true); y+=6;
     }
     if(state.negocio.telefono){ center("Tel. "+state.negocio.telefono, 8.5, false); y+=4.6; }
     if(state.negocio.direccion){ center(state.negocio.direccion, 8.5, false); y+=4.6; }
@@ -2567,7 +2567,7 @@
       + '  <div class="modal" style="max-width:380px;">'
       + '    <div class="ticket">'
       + (state.negocio.logo ? '<img class="biz-logo" src="'+escapeHtml(state.negocio.logo)+'" alt="">' : '')
-      + (state.negocio.logo ? '' : '      <div class="biz">'+escapeHtml(state.negocio.nombre||"Distribuciones Adrianos")+'</div>')
+      + (state.negocio.logo ? '' : '      <div class="biz">'+escapeHtml(state.negocio.nombre||"Distribuidora Adriano's")+'</div>')
       + (state.negocio.telefono ? '<div class="biz-sub">Tel. '+escapeHtml(state.negocio.telefono)+'</div>' : '')
       + (state.negocio.direccion ? '<div class="biz-sub">'+escapeHtml(state.negocio.direccion)+'</div>' : '')
       + '      <div class="doc-title">Nota de venta</div>'
@@ -3078,7 +3078,7 @@
       P.push(r.bits);
       E("\n");
     } else {
-      B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]); E((state.negocio.nombre || "Distribuciones Adrianos") + "\n"); B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
+      B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]); E((state.negocio.nombre || "Distribuidora Adriano's") + "\n"); B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
     }
     if(state.negocio.telefono) E("Tel. " + state.negocio.telefono + "\n");
     if(state.negocio.direccion) txtWrap(state.negocio.direccion, TXT_COLS).forEach(function(l){ E(l + "\n"); });
@@ -3179,7 +3179,7 @@
     if(!btDisponible()){ alert(btMensajeNoDisponible()); return; }
     if(btLang() === "ESCPOSTXT"){
       var pr = unir([new Uint8Array([0x1b,0x40,0x1c,0x2e,0x1b,0x74,0x00,0x1b,0x61,0x01,0x1b,0x45,0x01]), ascii("PRUEBA DE IMPRESORA\n"), new Uint8Array([0x1b,0x45,0x00]),
-        ascii("Distribuciones Adrianos\nModo texto rapido | 80 mm\n"), new Uint8Array([0x1b,0x61,0x00]), ascii("-".repeat(TXT_COLS)+"\n"+txtLR("Izquierda","Derecha",TXT_COLS)+"\n"+"-".repeat(TXT_COLS)+"\n"),
+        ascii("Distribuidora Adriano's\nModo texto rapido | 80 mm\n"), new Uint8Array([0x1b,0x61,0x00]), ascii("-".repeat(TXT_COLS)+"\n"+txtLR("Izquierda","Derecha",TXT_COLS)+"\n"+"-".repeat(TXT_COLS)+"\n"),
         new Uint8Array([0x1b,0x61,0x01]), ascii("Si lees esto, esta bien\n"), new Uint8Array([0x1b,0x64,0x03,0x1b,0x61,0x00])]);
       btConectar().then(function(ch){ return etapa("enviar", btEnviar(ch, pr)); }).then(function(){ btEstado("Enviado a la impresora ✓"); }).catch(function(e){
         btEstado(""); if(e && e.name === "NotFoundError") return; alert("No se pudo imprimir: "+btErrorTexto(e));
@@ -3188,7 +3188,7 @@
     }
     var cd = new CanvasDoc(80, 46);
     cd.setFont("courier", "bold").setFontSize(12); cd.text("PRUEBA DE IMPRESORA", 40, 10, { align:"center" });
-    cd.setFont("courier", "normal").setFontSize(9); cd.text("Distribuciones Adrianos", 40, 17, { align:"center" });
+    cd.setFont("courier", "normal").setFontSize(9); cd.text("Distribuidora Adriano's", 40, 17, { align:"center" });
     cd.text("Lenguaje: "+btLang()+"  |  80 mm", 40, 23, { align:"center" });
     cd.setLineWidth(0.3); cd.rect(5, 27, 70, 12);
     cd.text("Si lees esto, esta bien", 40, 34.5, { align:"center" });
@@ -3471,7 +3471,7 @@
     else if(action==="abrir-ajustes"){ openAjustes(); }
     else if(action==="guardar-ajustes"){
       var data = Object.assign({}, state.negocio, {
-        nombre: document.getElementById("a-nombre").value.trim() || "Distribuciones Adrianos",
+        nombre: document.getElementById("a-nombre").value.trim() || "Distribuidora Adriano's",
         telefono: document.getElementById("a-telefono").value.trim(),
         direccion: document.getElementById("a-direccion").value.trim(),
         pie: document.getElementById("a-pie").value.trim() || "Gracias por su Compra. ¡Hasta la próxima entrega!",

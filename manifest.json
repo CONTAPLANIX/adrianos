@@ -1,7 +1,7 @@
 {
   "name": "Adrianos",
   "short_name": "Adrianos",
-  "description": "Notas de venta Distribuciones Adrianos",
+  "description": "Notas de venta Distribuidora Adriano's",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
