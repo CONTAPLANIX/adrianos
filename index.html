@@ -21,13 +21,13 @@
 <script src="firebase-config.js"></script>
 <style>
   :root{
-    --paper:#fbf4e9;
-    --paper-alt:#f5e6d3;
+    --paper:#fff3e6;
+    --paper-alt:#ffe8cc;
     --paper-raised:#ffffff;
     --ink:#092d58;
     --ink-soft:#5c6f88;
-    --line:#ecdac0;
-    --line-strong:#d9b98f;
+    --line:#f2c9a3;
+    --line-strong:#e9b47a;
     --accent:#f76204;
     --accent-strong:#d14f02;
     --accent-ink:#ffffff;
@@ -478,7 +478,7 @@
     return sinRedondeo ? crudo : redondear10(crudo);
   }
   var MONEDA_NOMBRE = "SOLES";
-  var APP_VERSION = "26 sep · A1";
+  var APP_VERSION = "26 sep · A2";
   // Mensaje del pie en lineas centradas: "Gracias por su Compra" / "¡Hasta la próxima entrega!"
   function pieLineas(){
     var t = String(state.negocio.pie || "Gracias por su Compra. ¡Hasta la próxima entrega!");
@@ -3669,8 +3669,8 @@
             var rec = JSON.parse(localStorage.getItem("ad_recent_names_v1") || "[]").filter(function(n){ return n!==yo.nombre; });
             rec.unshift(yo.nombre); localStorage.setItem("ad_recent_names_v1", JSON.stringify(rec.slice(0,6)));
           }catch(e){}
-          ui.gateSelectedId = yo.id; ui.gateMode = "pin"; ui.gateError = ""; ui.gateNombre = "";
-          renderGate();
+          ui.gateSelectedId = yo.id; ui.gateError = ""; ui.gateNombre = "";
+          loginAs(yo);
         });
       }).catch(function(err){
         var code = err && err.code || "";
