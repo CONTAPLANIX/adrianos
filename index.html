@@ -316,9 +316,11 @@
   .modal h2{ font-size:18px; margin-bottom:16px; }
 
   .ticket{ background:var(--paper-raised); width:100%; max-width:340px; margin:0 auto; padding:20px 18px; border-top:2px dashed var(--line-strong); border-bottom:2px dashed var(--line-strong); font-family:"IBM Plex Mono",monospace; border-radius:2px; }
-  .ticket .biz-logo{ display:block; width:150px; height:150px; object-fit:contain; margin:0 auto 8px; }
+  .ticket{ font-weight:500; }
+  .ticket .biz-logo{ display:block; width:185px; height:185px; object-fit:contain; margin:0 auto 6px; }
   .ticket .biz{ text-align:center; font-family:"Anton","Arial Narrow",sans-serif; font-size:17px; margin-bottom:2px; }
-  .ticket .biz-sub{ text-align:center; font-size:11px; color:var(--ink-soft); margin-bottom:10px; }
+  .ticket .biz-sub{ text-align:center; font-size:13px; font-weight:600; color:var(--ink); line-height:1.25; margin-bottom:1px; }
+  .ticket .biz-sub + .doc-title{ margin-top:10px; }
   .ticket .doc-title{ text-align:center; font-size:12px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:2px; }
   .ticket .corr-stamp{ text-align:center; color:var(--accent); font-size:20px; font-weight:600; transform:rotate(-2deg); margin:4px 0 10px; }
   .ticket .meta{ display:flex; justify-content:space-between; gap:10px; font-size:12px; margin-bottom:2px; }
@@ -346,6 +348,7 @@
   .ticket .foot.pedidos{ margin-top:8px; color:var(--ink); font-size:12px; }
   .ticket .foot.pedidos strong{ font-size:13px; }
   .ticket .legal{ text-align:center; font-size:9.5px; color:var(--ink-soft); margin-top:6px; }
+  .ticket .foot, .ticket .legal, .ticket .ubic-block div, .ticket .it .qp{ color:var(--ink); }
   .ticket-actions{ display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
 
   .internal-note{ background:var(--paper-alt); border:1px dashed var(--line-strong); border-radius:var(--r-sm); padding:10px 14px; margin-top:14px; font-size:12.5px; line-height:1.5; }
@@ -374,8 +377,9 @@
     .modal{ box-shadow:none !important; border:none !important; padding:0 !important; max-width:80mm !important; width:80mm !important; border-radius:0 !important; animation:none !important; }
     .ticket{ width:72mm !important; max-width:72mm !important; margin:0 auto !important; padding:3mm 0 12mm !important; color:#000 !important; background:#fff !important; border-top:none !important; border-bottom:none !important; }
     .ticket *{ color:#000 !important; }
-    .ticket .biz-logo{ width:34mm !important; height:34mm !important; margin-bottom:2mm !important; }
-    .ticket .biz-sub{ font-size:9pt !important; margin-bottom:1mm !important; }
+    .ticket{ font-weight:600 !important; }
+    .ticket .biz-logo{ width:42mm !important; height:42mm !important; margin-bottom:1.5mm !important; }
+    .ticket .biz-sub{ font-size:10.5pt !important; font-weight:700 !important; margin-bottom:.4mm !important; }
     .ticket .doc-title{ font-size:10pt !important; }
     .ticket .corr-stamp{ font-size:15pt !important; transform:none !important; margin:1mm 0 3mm !important; }
     .ticket .meta{ font-size:9.5pt !important; margin-bottom:1mm !important; gap:3mm; }
@@ -478,7 +482,7 @@
     return sinRedondeo ? crudo : redondear10(crudo);
   }
   var MONEDA_NOMBRE = "SOLES";
-  var APP_VERSION = "5 oct · A7";
+  var APP_VERSION = "5 oct · A8";
   // Mensaje del pie en lineas centradas: "Gracias por su Compra" / "¡Hasta la próxima entrega!"
   function pieLineas(){
     var t = String(state.negocio.pie || "Gracias por su Compra. ¡Hasta la próxima entrega!");
@@ -2378,6 +2382,21 @@
 
   function drawTicketOnDoc(doc, venta, logoDataUrl, direccionTexto){
     var x = 5, w = 70, y = 5;
+    // Letra un poco mas gruesa: en PDF se rellena y ademas se traza el borde de cada letra; en imagen lo hace CanvasDoc.
+    if(!doc.__grueso){
+      doc.__grueso = true;
+      if(doc instanceof CanvasDoc){ doc.engrosar = true; }
+      else {
+        var textoBase = doc.text;
+        doc.text = function(t, tx, ty, o){
+          var anchoAntes = doc.getLineWidth ? doc.getLineWidth() : 0.2;
+          doc.setLineWidth(0.11);
+          var r = textoBase.call(doc, t, tx, ty, Object.assign({}, o || {}, { renderingMode:"fillThenStroke" }));
+          doc.setLineWidth(anchoAntes);
+          return r;
+        };
+      }
+    }
     function center(text, size, bold){ doc.setFont("courier", bold?"bold":"normal"); doc.setFontSize(size); doc.text(String(text), x+w/2, y, {align:"center", maxWidth:w}); }
     function row(label, val, size, bold){
       doc.setFont("courier", bold?"bold":"normal"); doc.setFontSize(size||9.5);
@@ -2389,12 +2408,12 @@
     }
 
     if(logoDataUrl){
-      try{ doc.addImage(logoDataUrl, "JPEG", x+w/2-13, y, 26, 26); y += 30; }catch(e){}
+      try{ doc.addImage(logoDataUrl, "JPEG", x+w/2-16.5, y, 33, 33); y += 37; }catch(e){}
     } else {
       y += 4; center(state.negocio.nombre||"Distribuidora Adriano's", 13, true); y+=6;
     }
-    direccionLineas().forEach(function(l){ center(l, 8.5, false); y+=4.2; });
-    if(state.negocio.telefono){ center("Cel. "+state.negocio.telefono, 8.5, true); y+=4.6; }
+    direccionLineas().forEach(function(l){ center(l, 9.5, true); y+=4.2; });
+    if(state.negocio.telefono){ center("Cel. "+state.negocio.telefono, 9.5, true); y+=4.8; }
     y += 1.4;
     center("NOTA DE VENTA", 10, false); y+=6.2;
     center("N° "+numNota(venta), 15, true); y+=4;
@@ -2898,7 +2917,8 @@
       if(o.maxWidth && !Array.isArray(t)) lines = this.splitTextToSize(String(t), o.maxWidth);
       var paso = this.size * 25.4 / 72 * (o.lineHeightFactor || 1.15);
       ctx.textAlign = o.align === "right" ? "right" : (o.align === "center" ? "center" : "left");
-      lines.forEach(function(l, i){ ctx.fillText(String(l), x * k, (y + i * paso) * k); });
+      if(self.engrosar){ ctx.lineWidth = self.size * 25.4 / 72 * k * 0.05; ctx.lineJoin = "round"; }
+      lines.forEach(function(l, i){ ctx.fillText(String(l), x * k, (y + i * paso) * k); if(self.engrosar) ctx.strokeText(String(l), x * k, (y + i * paso) * k); });
     },
     line: function(x1, y1, x2, y2){
       var ctx = this.ctx, k = this.k;
@@ -2939,7 +2959,7 @@
       for(var xx = 0; xx < W; xx++){
         var p = (yy * W + xx) * 4, i = yy * W + xx;
         var lum = 0.299 * data[p] + 0.587 * data[p+1] + 0.114 * data[p+2];
-        var umbral = 165;
+        var umbral = 190;
         if(cd.imgs.length && esLogo(xx, yy)){ logo[i] = 1; umbral = (BAYER4[yy % 4][xx % 4] + 0.5) / 16 * 255; }
         if(lum < umbral) negro[i] = 1;
       }
@@ -3107,6 +3127,7 @@
     B([0x1c, 0x2e]);            // salir del modo chino (FS .)
     B([0x1b, 0x74, 0x00]);      // tabla de caracteres 437
     B([0x1b, 0x33, 0x1e]);      // interlineado 30 puntos (mas apretado y parejo)
+    if(btGrueso()) B([0x1b, 0x47, 0x01]); // doble pasada: texto mas oscuro en toda la nota
     B([0x1b, 0x61, 0x01]);      // centrado
     if(logoRaster){
       var r = logoRaster;
@@ -3116,8 +3137,10 @@
     } else {
       B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]); E((state.negocio.nombre || "Distribuidora Adriano's") + "\n"); B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
     }
+    B([0x1b, 0x45, 0x01]);
     direccionLineas().forEach(function(d){ txtWrap(d, TXT_COLS).forEach(function(l){ E(l + "\n"); }); });
-    if(state.negocio.telefono){ B([0x1b, 0x45, 0x01]); E("Cel. " + state.negocio.telefono + "\n"); B([0x1b, 0x45, 0x00]); }
+    if(state.negocio.telefono) E("Cel. " + state.negocio.telefono + "\n");
+    B([0x1b, 0x45, 0x00]);
     E("NOTA DE VENTA\n");
     B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]);
     E("No. " + numNota(venta) + "\n");
@@ -3166,8 +3189,8 @@
   // Logo como imagen chica (24 mm) para el modo texto.
   function logoRasterParaTexto(img){
     if(!img) return null;
-    var cd = new CanvasDoc(80, 25); cd.logoImg = img;
-    cd.addImage(null, "", 28, 0.5, 24, 24);
+    var cd = new CanvasDoc(80, 31); cd.logoImg = img;
+    cd.addImage(null, "", 25, 0.5, 30, 30);
     return canvasABits(cd);
   }
 
