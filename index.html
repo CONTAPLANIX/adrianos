@@ -478,13 +478,15 @@
     return sinRedondeo ? crudo : redondear10(crudo);
   }
   var MONEDA_NOMBRE = "SOLES";
-  var APP_VERSION = "3 oct · A6";
+  var APP_VERSION = "5 oct · A7";
   // Mensaje del pie en lineas centradas: "Gracias por su Compra" / "¡Hasta la próxima entrega!"
   function pieLineas(){
     var t = String(state.negocio.pie || "Gracias por su Compra. ¡Hasta la próxima entrega!");
     return t.split(/\n|\.\s+/).map(function(x){ return x.trim().replace(/\.$/, ""); }).filter(Boolean);
   }
   // Linea "Pedidos al:" con los celulares (configurable). En PDF sin emoji (la fuente no lo tiene).
+  // Direccion del encabezado: cada "|" es un salto de linea en la nota.
+  function direccionLineas(){ return String(state.negocio.direccion||"").split("|").map(function(l){ return l.trim(); }).filter(Boolean); }
   function pedidosTexto(){ var p = String(state.negocio.pedidos === undefined ? "" : state.negocio.pedidos).trim(); return p; }
   function pedidosLineas(conEmoji){
     var p = pedidosTexto(); if(!p) return [];
@@ -2391,8 +2393,8 @@
     } else {
       y += 4; center(state.negocio.nombre||"Distribuidora Adriano's", 13, true); y+=6;
     }
-    if(state.negocio.telefono){ center("Tel. "+state.negocio.telefono, 8.5, false); y+=4.6; }
-    if(state.negocio.direccion){ center(state.negocio.direccion, 8.5, false); y+=4.6; }
+    direccionLineas().forEach(function(l){ center(l, 8.5, false); y+=4.2; });
+    if(state.negocio.telefono){ center("Cel. "+state.negocio.telefono, 8.5, true); y+=4.6; }
     y += 1.4;
     center("NOTA DE VENTA", 10, false); y+=6.2;
     center("N° "+numNota(venta), 15, true); y+=4;
@@ -2602,8 +2604,8 @@
       + '    <div class="ticket">'
       + (state.negocio.logo ? '<img class="biz-logo" src="'+escapeHtml(state.negocio.logo)+'" alt="">' : '')
       + (state.negocio.logo ? '' : '      <div class="biz">'+escapeHtml(state.negocio.nombre||"Distribuidora Adriano's")+'</div>')
-      + (state.negocio.telefono ? '<div class="biz-sub">Tel. '+escapeHtml(state.negocio.telefono)+'</div>' : '')
-      + (state.negocio.direccion ? '<div class="biz-sub">'+escapeHtml(state.negocio.direccion)+'</div>' : '')
+      + direccionLineas().map(function(l){ return '<div class="biz-sub">'+escapeHtml(l)+'</div>'; }).join("")
+      + (state.negocio.telefono ? '<div class="biz-sub"><strong>Cel. '+escapeHtml(state.negocio.telefono)+'</strong></div>' : '')
       + '      <div class="doc-title">Nota de venta</div>'
       + '      <div class="corr-stamp">N° '+numNota(venta)+'</div>'
       + '      <div class="meta"><span>Fecha</span><span>'+fechaDisplay(venta.fecha)+'</span></div>'
@@ -3114,8 +3116,8 @@
     } else {
       B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]); E((state.negocio.nombre || "Distribuidora Adriano's") + "\n"); B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
     }
-    if(state.negocio.telefono) E("Tel. " + state.negocio.telefono + "\n");
-    if(state.negocio.direccion) txtWrap(state.negocio.direccion, TXT_COLS).forEach(function(l){ E(l + "\n"); });
+    direccionLineas().forEach(function(d){ txtWrap(d, TXT_COLS).forEach(function(l){ E(l + "\n"); }); });
+    if(state.negocio.telefono){ B([0x1b, 0x45, 0x01]); E("Cel. " + state.negocio.telefono + "\n"); B([0x1b, 0x45, 0x00]); }
     E("NOTA DE VENTA\n");
     B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]);
     E("No. " + numNota(venta) + "\n");
@@ -3287,8 +3289,8 @@
       + '  <div class="modal">'
       + '    <h2>Configuración</h2>'
       + '    <div class="field"><label for="a-nombre">Nombre del negocio / vendedor</label><input id="a-nombre" type="text" value="'+escapeHtml(n.nombre||"")+'"></div>'
-      + '    <div class="field"><label for="a-telefono">Teléfono</label><input id="a-telefono" type="text" value="'+escapeHtml(n.telefono||"")+'"></div>'
-      + '    <div class="field"><label for="a-direccion">Dirección / lugar de emisión</label><input id="a-direccion" type="text" placeholder="Ej: Av. Los Pollos 123, Lima" value="'+escapeHtml(n.direccion||"")+'"></div>'
+      + '    <div class="field"><label for="a-telefono">Celulares (salen en el encabezado de la nota)</label><input id="a-telefono" type="text" value="'+escapeHtml(n.telefono||"")+'"></div>'
+      + '    <div class="field"><label for="a-direccion">Dirección (usa | para separar líneas)</label><input id="a-direccion" type="text" placeholder="Ej: Av. Los Pollos 123, Lima" value="'+escapeHtml(n.direccion||"")+'"></div>'
       + '    <div class="field"><label for="a-pie">Mensaje al pie de la nota</label><input id="a-pie" type="text" value="'+escapeHtml(n.pie||"")+'"></div>'
       + '    <div class="field"><label for="a-pedidos">Celulares para pedidos (separados con |)</label><input id="a-pedidos" type="text" value="'+escapeHtml(pedidosTexto())+'" placeholder="Ej: 999111222 | 999333444"></div>'
       + '    <div class="actions-row"><button class="btn" data-action="cerrar-overlay">Cancelar</button><button class="btn btn-primary" data-action="guardar-ajustes">Guardar</button></div>'
