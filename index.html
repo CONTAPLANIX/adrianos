@@ -319,9 +319,9 @@
   .ticket{ font-weight:500; }
   .ticket .biz-logo{ display:block; width:185px; height:185px; object-fit:contain; margin:0 auto 6px; }
   .ticket .biz{ text-align:center; font-family:"Anton","Arial Narrow",sans-serif; font-size:17px; margin-bottom:2px; }
-  .ticket .biz-sub{ text-align:center; font-size:13px; font-weight:600; color:var(--ink); line-height:1.25; margin-bottom:1px; }
+  .ticket .biz-sub{ text-align:center; font-size:17px; font-weight:700; color:var(--ink); line-height:1.22; margin-bottom:1px; letter-spacing:-.01em; }
   .ticket .biz-sub + .doc-title{ margin-top:10px; }
-  .ticket .doc-title{ text-align:center; font-size:12px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:2px; }
+  .ticket .doc-title{ text-align:center; font-size:17px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:2px; }
   .ticket .corr-stamp{ text-align:center; color:var(--accent); font-size:20px; font-weight:600; transform:rotate(-2deg); margin:4px 0 10px; }
   .ticket .meta{ display:flex; justify-content:space-between; gap:10px; font-size:12px; margin-bottom:2px; }
   .ticket .meta span:first-child{ flex-shrink:0; }
@@ -379,8 +379,8 @@
     .ticket *{ color:#000 !important; }
     .ticket{ font-weight:600 !important; }
     .ticket .biz-logo{ width:42mm !important; height:42mm !important; margin-bottom:1.5mm !important; }
-    .ticket .biz-sub{ font-size:10.5pt !important; font-weight:700 !important; margin-bottom:.4mm !important; }
-    .ticket .doc-title{ font-size:10pt !important; }
+    .ticket .biz-sub{ font-size:12pt !important; font-weight:700 !important; margin-bottom:.4mm !important; }
+    .ticket .doc-title{ font-size:12.5pt !important; font-weight:700 !important; }
     .ticket .corr-stamp{ font-size:15pt !important; transform:none !important; margin:1mm 0 3mm !important; }
     .ticket .meta{ font-size:9.5pt !important; margin-bottom:1mm !important; gap:3mm; }
     .ticket .meta span:last-child{ text-align:right; overflow-wrap:anywhere; }
@@ -482,7 +482,7 @@
     return sinRedondeo ? crudo : redondear10(crudo);
   }
   var MONEDA_NOMBRE = "SOLES";
-  var APP_VERSION = "5 oct · A8";
+  var APP_VERSION = "5 oct · A9";
   // Mensaje del pie en lineas centradas: "Gracias por su Compra" / "¡Hasta la próxima entrega!"
   function pieLineas(){
     var t = String(state.negocio.pie || "Gracias por su Compra. ¡Hasta la próxima entrega!");
@@ -2412,10 +2412,11 @@
     } else {
       y += 4; center(state.negocio.nombre||"Distribuidora Adriano's", 13, true); y+=6;
     }
-    direccionLineas().forEach(function(l){ center(l, 9.5, true); y+=4.2; });
-    if(state.negocio.telefono){ center("Cel. "+state.negocio.telefono, 9.5, true); y+=4.8; }
-    y += 1.4;
-    center("NOTA DE VENTA", 10, false); y+=6.2;
+    y += 1.2;
+    direccionLineas().forEach(function(l){ center(l, 12, true); y+=5.2; });
+    if(state.negocio.telefono){ center("CEL: "+state.negocio.telefono, 12, true); y+=5.6; }
+    y += 1.8;
+    center("NOTA DE VENTA", 13, true); y+=6.6;
     center("N° "+numNota(venta), 15, true); y+=4;
     doc.setLineWidth(0.1); doc.line(x, y, x+w, y); y += 5;
 
@@ -2624,7 +2625,7 @@
       + (state.negocio.logo ? '<img class="biz-logo" src="'+escapeHtml(state.negocio.logo)+'" alt="">' : '')
       + (state.negocio.logo ? '' : '      <div class="biz">'+escapeHtml(state.negocio.nombre||"Distribuidora Adriano's")+'</div>')
       + direccionLineas().map(function(l){ return '<div class="biz-sub">'+escapeHtml(l)+'</div>'; }).join("")
-      + (state.negocio.telefono ? '<div class="biz-sub"><strong>Cel. '+escapeHtml(state.negocio.telefono)+'</strong></div>' : '')
+      + (state.negocio.telefono ? '<div class="biz-sub"><strong>CEL: '+escapeHtml(state.negocio.telefono)+'</strong></div>' : '')
       + '      <div class="doc-title">Nota de venta</div>'
       + '      <div class="corr-stamp">N° '+numNota(venta)+'</div>'
       + '      <div class="meta"><span>Fecha</span><span>'+fechaDisplay(venta.fecha)+'</span></div>'
@@ -3138,10 +3139,11 @@
       B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]); E((state.negocio.nombre || "Distribuidora Adriano's") + "\n"); B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
     }
     B([0x1b, 0x45, 0x01]);
+    B([0x1d, 0x21, 0x01]);      // doble altura
     direccionLineas().forEach(function(d){ txtWrap(d, TXT_COLS).forEach(function(l){ E(l + "\n"); }); });
-    if(state.negocio.telefono) E("Cel. " + state.negocio.telefono + "\n");
-    B([0x1b, 0x45, 0x00]);
+    if(state.negocio.telefono) E("CEL: " + state.negocio.telefono + "\n");
     E("NOTA DE VENTA\n");
+    B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
     B([0x1b, 0x45, 0x01]); B([0x1d, 0x21, 0x11]);
     E("No. " + numNota(venta) + "\n");
     B([0x1d, 0x21, 0x00]); B([0x1b, 0x45, 0x00]);
