@@ -5,6 +5,7 @@ var PRECACHE_URLS = [
   "./manifest.json",
   "./firebase-config.js",
   "./assets/logo.png",
+  "./assets/logo-impresion.png",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/apple-touch-icon.png",
